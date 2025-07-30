@@ -112,9 +112,18 @@ function AlarmRegist() {
                     {/*</dd>*/}
                 </dl>
                 <input type="text" placeholder="사용자 이름 입력" className="name" id="userName" value={userName} onChange={onChagneUserName}/>
-                <button className="ok" onClick={onClickRegistry}>등록</button>
-                <button className="ok" onClick={deleteRegistry}>삭제</button>
-                <button className="ok" onClick={onClickHistory}>이력조회</button>
+                <button className="mainbtn" onClick={onClickRegistry}>등록</button>
+                <button className="mainbtn" onClick={deleteRegistry}>삭제</button>
+                <button className="mainbtn" onClick={onClickHistory}>이력조회</button>
+                <button className="mainbtn" onClick={() => {
+                    const param = { fcmToken: token};
+
+                    AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/sendTestPush`, param, (data) => {
+
+                    }, (err: any) => {
+                        errorHandler(err);
+                    })
+                }}>테스트</button>
             </div>
 
         </div>
