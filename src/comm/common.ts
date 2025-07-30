@@ -52,7 +52,7 @@ export function errorHandler(error: any) {
 }
 
 export function TimeFormatter(stringTime: string) {
-    if(stringTime.length!=14) return stringTime;
+    if(!stringTime || stringTime.length!=14) return stringTime;
 
     return stringTime.slice(0,4)+'-'+stringTime.slice(4,6)+'-'+stringTime.slice(6,8)+" "
     +stringTime.slice(8,10)+":"+stringTime.slice(10,12)+":"+stringTime.slice(12);

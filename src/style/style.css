@@ -50,11 +50,11 @@ article h2{color: #fff; font-size: 17px; font-weight: normal; width: 100%; text-
 .listbox table td{font-size: 13px; color: #000; text-align: center; padding:7px 0; line-height: 16px; font-weight: normal;font-family: 'Noto Sans KR';}
 .listbox table td:nth-child(2){text-align: left; padding:7px 5px;}
 
-.listbox tr th:nth-child(1),.listbox tr td:nth-child(1){width:15%}
-.listbox tr th:nth-child(2),.listbox tr td:nth-child(2){width:50%}
-.listbox tr th:nth-child(3),.listbox tr td:nth-child(3){width:15%}
+.listbox tr th:nth-child(1),.listbox tr td:nth-child(1){width:5%}
+.listbox tr th:nth-child(2),.listbox tr td:nth-child(2){width:15%}
+.listbox tr th:nth-child(3),.listbox tr td:nth-child(3){width:50%}
 .listbox tr th:nth-child(4),.listbox tr td:nth-child(4){width:15%}
-.listbox tr th:nth-child(5),.listbox tr td:nth-child(5){width:5%}
+.listbox tr th:nth-child(5),.listbox tr td:nth-child(5){width:15%}
 
 .listcon{position: absolute;top: 50px;bottom: 5px;left: 5px;right: 5px;background: #fff;border-radius: 10px;overflow-y:auto;}
 .listcon table{width: 100%;}

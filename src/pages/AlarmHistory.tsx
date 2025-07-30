@@ -20,6 +20,7 @@ function AlarmHistory() {
     const [loading, setLoading] = useState(false);
     const [histData, setHistData] = useState<Array<HistDataType>>([]);
     const [selBidNtceId, setSelBidNtceid] = useState("");
+    const [token, setToken] = useState("");
     const [detlOpen, setDetlOpen] = useState(false);
 
     const navigate = useNavigate();
@@ -28,6 +29,8 @@ function AlarmHistory() {
 
         setLoading(true);
         getDeviceToken((currentToken: string) => {
+            setToken(currentToken);
+
             const param = {
                 fcmToken: currentToken
             }
@@ -40,7 +43,7 @@ function AlarmHistory() {
                 navigate(pagePaths.regist.path);
             });
         })
-    }, []);
+    }, [detlOpen]);
 
     return (
         <>
@@ -54,11 +57,11 @@ function AlarmHistory() {
                         <table>
                             <thead>
                             <tr>
+                                <th>조회여부</th>
                                 <th>공고번호</th>
                                 <th>공고명</th>
                                 <th>게시일</th>
                                 <th>전송일자</th>
-                                <th>확인여부</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -69,11 +72,11 @@ function AlarmHistory() {
                                 }
                                 return (
                                     <tr onClick={onClick} key={data.bidNtceId + '_' + index}>
-                                        <td>{data.bidNtceId}</td>
-                                        <td>{data.bidNtceNm}</td>
-                                        <td>{TimeFormatter(data.rgstDt)}</td>
-                                        <td>{TimeFormatter(data.sendDt)}</td>
-                                        <td>{data.inqryYn}</td>
+                                        <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{data.inqryYn === 'Y' ? "확인" : "미확인"}</td>
+                                        <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{data.bidNtceId}</td>
+                                        <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{data.bidNtceNm}</td>
+                                        <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{TimeFormatter(data.rgstDt)}</td>
+                                        <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{TimeFormatter(data.sendDt)}</td>
                                     </tr>
                                 )
                             })
@@ -84,7 +87,7 @@ function AlarmHistory() {
                 </article>
             </div>
             {detlOpen
-                ? <BidNtceDetail isOpen={detlOpen} setIsOpen={setDetlOpen} bidNtceId={selBidNtceId}/>
+                ? <BidNtceDetail isOpen={detlOpen} setIsOpen={setDetlOpen} bidNtceId={selBidNtceId} fcmToken={token}/>
                 : null
             }
 

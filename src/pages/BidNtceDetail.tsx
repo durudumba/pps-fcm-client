@@ -69,7 +69,8 @@ const initBidNtceDetl: BidNtceDetlType = {
 function BidNtceDetail(props: {
     isOpen: boolean,
     setIsOpen: (isOpen: boolean) => void,
-    bidNtceId: string
+    bidNtceId: string,
+    fcmToken: string
 }) {
     const [data, setData] = useState<BidNtceDetlType>(initBidNtceDetl);
 
@@ -80,11 +81,12 @@ function BidNtceDetail(props: {
     useEffect(() => {
 
         if(!props.bidNtceId || props.bidNtceId =='') return ;
-        console.log(props.bidNtceId);
 
         const param = {
+            fcmToken : props.fcmToken,
             bidNtceId : props.bidNtceId
         }
+        console.log(param);
 
         AxiosCall("GET", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/getBidNtceDetl`, param, (data) => {
             setData(data);
