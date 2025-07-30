@@ -6,6 +6,13 @@ self.addEventListener("install", function () {
 self.addEventListener("activate", function () {
   console.log("fcm sw activate..");
 });
+
+self.addEventListener("notificationclick", function(event) {
+  const url = "/history";
+  event.notification.close();
+  event.waitUntil(clients.openWindow(url));
+});
+
 self.addEventListener("push", function (e) {
   if (!e.data.json()) return;
   const resultData = e.data.json().notification;
