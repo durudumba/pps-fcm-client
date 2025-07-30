@@ -25,37 +25,22 @@ function AlarmHistory() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setLoading(true);
 
+        setLoading(true);
         getDeviceToken((currentToken: string) => {
             const param = {
                 fcmToken: currentToken
             }
-
-            AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/validFcmToken`, param, (data) => {
+            AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/getSendMsgHistory`, param, (data: Array<HistDataType>) => {
                 setLoading(false);
-                if(data) {
-                    AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/history/getSendMsgHistory`, param, (data: Array<HistDataType>) => {
-                        setLoading(false);
-                        setHistData(data);
-                    }, (err: any) => {
-                        setLoading(false);
-                        errorHandler(err);
-                    });
-                } else {
-                    alert("등록되지 않은 토큰입니다");
-                    navigate(pagePaths.regist.path);
-                }
+                setHistData(data);
             }, (err: any) => {
-                alert("토큰 검증 오류 발생");
+                setLoading(false);
+                errorHandler(err);
                 navigate(pagePaths.regist.path);
             });
-
-
         })
     }, []);
-
-    if(loading) return (<MainLoading/>)
 
     return (
         <>
@@ -103,6 +88,7 @@ function AlarmHistory() {
                 : null
             }
 
+            <MainLoading show={loading}/>
         </>
     );
 }

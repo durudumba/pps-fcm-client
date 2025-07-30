@@ -26,6 +26,15 @@ function AlarmRegist() {
             });
     }
 
+    const checkNotificationPermission = () => {
+        if(permission === 'granted') {
+            return true;
+        } else {
+            alert('알림 권한이 거부되었습니다. 설정에서 허용해주세요.');
+            return false;
+        }
+    }
+
     const onChagneUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value: string = e.target.value;
         setUserName(value);
@@ -37,22 +46,19 @@ function AlarmRegist() {
             return;
         }
 
-        if (permission === "granted") {
-
+        if(checkNotificationPermission()) {
             if(!token || token == '') {
                 alert("토큰 정보가 없습니다. 새로고침 후 등록해주세요");
                 return ;
             }
-
-            setLoading(true);
-            console.log("토큰 저장: ",token);
 
             const param = {
                 userName,
                 fcmToken: token
             }
 
-            AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/token`, param, (data) => {
+            setLoading(true);
+            AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/saveToken`, param, (data) => {
                 setLoading(false);
                 alert("알림 등록 성공");
             }, (err: any) => {
@@ -60,21 +66,23 @@ function AlarmRegist() {
                 errorHandler(err);
                 return ;
             });
-        } else if (permission === "denied") {
-            alert("알림 권한이 거부되었습니다. 설정에서 허용해주세요.");
         } else {
-            alert("알림 권한을 요청합니다");
-            handleAllowNotification();
+            if(permission !== 'denied') {
+                alert("알림 권한을 요청합니다");
+                handleAllowNotification();
+            }
         }
+
     }
 
     const deleteRegistry = async () => {
-        console.log("토큰 삭제: ",token);
+        if(!checkNotificationPermission()) return;
 
         const param = {
             fcmToken : token
         }
 
+        setLoading(true);
         AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/deleteToken`, param, (data) => {
             setLoading(false);
             alert("알림 삭제 성공");
@@ -86,7 +94,26 @@ function AlarmRegist() {
     }
 
     const onClickHistory = () => {
+        if(!checkNotificationPermission()) return;
+
         navigate(pagePaths.history.path);
+    }
+
+    const onClickTest = () => {
+        if(!checkNotificationPermission()) return;
+
+        const param = {
+            fcmToken: token
+        };
+
+        setLoading(true);
+        AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/sendTestPush`, param, (data) => {
+            setLoading(false);
+            alert("테스트 알림 전송성공")
+        }, (err: any) => {
+            setLoading(false);
+            errorHandler(err);
+        })
     }
 
     useEffect(() => {
@@ -97,11 +124,7 @@ function AlarmRegist() {
             )
         }
 
-    }, []);
-
-    if (loading) {
-        return (<MainLoading/>)
-    }
+    });
 
     return (
         <div className="wrap">
@@ -119,17 +142,9 @@ function AlarmRegist() {
                 <button className="mainbtn" onClick={onClickRegistry}>등록</button>
                 <button className="mainbtn" onClick={deleteRegistry}>삭제</button>
                 <button className="mainbtn" onClick={onClickHistory}>이력조회</button>
-                <button className="mainbtn" onClick={() => {
-                    const param = { fcmToken: token};
-
-                    AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/sendTestPush`, param, (data) => {
-
-                    }, (err: any) => {
-                        errorHandler(err);
-                    })
-                }}>테스트</button>
+                <button className="mainbtn" onClick={onClickTest}>알림 테스트</button>
             </div>
-
+            <MainLoading show={loading}/>
         </div>
     )
 

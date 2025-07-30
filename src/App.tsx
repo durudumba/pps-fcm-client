@@ -1,4 +1,5 @@
 import './style/style.css';
+import './App.css'
 
 import {Routes, Route, BrowserRouter} from "react-router-dom";
 import AlarmRegist from "./pages/AlarmRegist";
