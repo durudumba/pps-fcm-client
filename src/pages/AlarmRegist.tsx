@@ -37,12 +37,13 @@ function AlarmRegist() {
             return;
         }
 
-        if(!token || token == '') {
-            alert("토큰 정보가 없습니다");
-            return ;
-        }
-
         if (permission === "granted") {
+
+            if(!token || token == '') {
+                alert("토큰 정보가 없습니다. 새로고침 후 등록해주세요");
+                return ;
+            }
+
             setLoading(true);
             console.log("토큰 저장: ",token);
 
@@ -90,9 +91,12 @@ function AlarmRegist() {
 
     useEffect(() => {
         handleAllowNotification();
-        getDeviceToken((currentToken: string) =>
-            setToken(currentToken)
-        )
+        if(permission === 'granted') {
+            getDeviceToken((currentToken: string) =>
+                setToken(currentToken)
+            )
+        }
+
     }, []);
 
     if (loading) {
