@@ -10,19 +10,30 @@ const { REACT_APP_VAPID_KEY,
       REACT_APP_NOTIFICATION_TOKEN_DOMAIN
  } = process.env;
 
+const initKeywordMap = {
+    "BIS" : false,
+    "ITS" : false,
+    "버스정보" : false,
+    "교통정보" : false,
+    "전기" : false
+}
+
 function AlarmRegist() {
     const [loading, setLoading] = useState(false);
     const [permission, setPermiss] = useState('denied');
     const [userName, setUserName] = useState("");
     const [token, setToken] = useState("");
 
+    const [keywordMap, setKeywordMap] = useState(initKeywordMap);
+
     const navigate = useNavigate();
 
     // 현재 알림 권한 허용확인
-    function handleAllowNotification() {
+    function handleAllowNotification(callback?: (permission: string) => void) {
         Notification.requestPermission()
             .then(permission => {
                 setPermiss(permission)
+                callback && callback(permission);
             });
     }
 
@@ -54,7 +65,8 @@ function AlarmRegist() {
 
             const param = {
                 userName,
-                fcmToken: token
+                fcmToken: token,
+                srchKeyword: Object.keys(keywordMap).filter((keyword: string) => keywordMap[keyword as keyof object]).join(",")
             }
 
             setLoading(true);
@@ -116,15 +128,45 @@ function AlarmRegist() {
         })
     }
 
-    useEffect(() => {
-        handleAllowNotification();
-        if(permission === 'granted') {
-            getDeviceToken((currentToken: string) =>
-                setToken(currentToken)
-            )
+    const onClickKeywordBox = (e: any) => {
+        const newKeywordMap = {...keywordMap, [e.target.id as keyof object]: e.target.checked};
+        const param = {
+            fcmToken : token,
+            srchKeyword: Object.keys(newKeywordMap).filter((keyword: string) => newKeywordMap[keyword as keyof object]).join(",")
         }
 
-    });
+        AxiosCall("POST", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/modSearchKeyword`, param, (data) => {
+            setKeywordMap(newKeywordMap);
+        }, (err: any) => {
+            errorHandler(err);
+        });
+    }
+
+    useEffect(() => {
+        handleAllowNotification((permission: string) => {
+            if(permission === 'granted') {
+                getDeviceToken((currentToken: string) => {
+                    setToken(currentToken);
+
+                    const param = {
+                        fcmToken: currentToken
+                    }
+
+                    AxiosCall("GET", `${REACT_APP_NOTIFICATION_TOKEN_DOMAIN}/api/notification/getSearchKeyword`, param, (data) => {
+                        let tempKeywordMap: typeof initKeywordMap = initKeywordMap;
+
+                        data.split(",").forEach((kw: string) => {
+                            tempKeywordMap = {...tempKeywordMap, [kw as keyof object]: true};
+                        })
+
+                        setKeywordMap(tempKeywordMap);
+                    }, (err: any) => {
+                        errorHandler(err);
+                    });
+                })
+            }
+        });
+    }, []);
 
     return (
         <div className="wrap">
@@ -132,11 +174,17 @@ function AlarmRegist() {
                 <h1 className="title">나라장터 입찰공고 알람 서비스</h1>
                 <dl className="alarmbox">
                     <dt>알람 수신 설정</dt>
-                    <div>개발 중인 기능</div>
-                    {/*<dd>*/}
-                    {/*    <label><input type="checkbox"/> BIS , ITS</label>*/}
-                    {/*    <label><input type="checkbox"/> 전기공사</label>*/}
-                    {/*</dd>*/}
+                    <dd>
+                        {
+                            Object.keys(keywordMap).map((keyword: string) => {
+                                if(!String(keyword)) return ;
+                                return (
+                                    <label key={keyword}><input type={"checkbox"} id={keyword} onChange={onClickKeywordBox} checked={keywordMap[keyword as keyof object]}/>&nbsp;{keyword}</label>
+                                )
+                            })
+                        }
+                    </dd>
+
                 </dl>
                 <input type="text" placeholder="사용자 이름 입력" className="name" id="userName" value={userName} onChange={onChagneUserName}/>
                 <button className="mainbtn" onClick={onClickRegistry}>등록</button>

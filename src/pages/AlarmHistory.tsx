@@ -57,11 +57,9 @@ function AlarmHistory() {
                         <table>
                             <thead>
                             <tr>
-                                <th>조회여부</th>
                                 <th>공고번호</th>
                                 <th>공고명</th>
                                 <th>게시일</th>
-                                <th>전송일자</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -72,11 +70,9 @@ function AlarmHistory() {
                                 }
                                 return (
                                     <tr onClick={onClick} key={data.bidNtceId + '_' + index}>
-                                        <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{data.inqryYn === 'Y' ? "확인" : "미확인"}</td>
                                         <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{data.bidNtceId}</td>
                                         <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{data.bidNtceNm}</td>
                                         <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{TimeFormatter(data.rgstDt)}</td>
-                                        <td style={{fontWeight:data.inqryYn==='Y'?"normal":"bold"}}>{TimeFormatter(data.sendDt)}</td>
                                     </tr>
                                 )
                             })
