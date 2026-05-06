@@ -1,70 +1,63 @@
-# Getting Started with Create React App
+# 조달청 입찰공고 알림 서비스 - 클라이언트
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**React / TypeScript** 기반의 조달청(나라장터) 입찰공고 실시간 알림 서비스의 웹 클라이언트입니다.
 
-## Available Scripts
+사용자가 관심 키워드를 등록하면, 해당 키워드가 포함된 신규 입찰공고가 등록될 때 **FCM(Firebase Cloud Messaging) 브라우저 푸시 알림**을 수신할 수 있습니다.
 
-In the project directory, you can run:
+> 관련 프로젝트
+> - [FCM 알림 발송 서버 (pps-fcm-server)](https://github.com/durudumba/pps-fcm-server)
+> - [입찰공고 수집 서버 (pps-noti-collect-server)](https://github.com/durudumba/pps-noti-collect-server)
 
-### `npm start`
+## 개발 기간
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2025.07 ~ 2025.08
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 기술 스택
 
-### `npm test`
+| 분류 | 기술 |
+|---|---|
+| Language | TypeScript 4.9 |
+| Framework | React 19 |
+| 푸시 알림 | Firebase Cloud Messaging (FCM) |
+| HTTP | Axios |
+| Styling | styled-components 6 |
+| 라우팅 | React Router DOM v6 |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 주요 기능
 
-### `npm run build`
+### FCM 알림 등록 / 해제
+- 브라우저에서 FCM 토큰을 발급받아 서버에 등록
+- 사용자 이름과 관심 키워드(쉼표 구분, 복수 설정 가능)를 함께 등록
+- 알림 해제 시 서버에서 FCM 토큰 삭제
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 실시간 브라우저 푸시 알림
+- 키워드 매칭 입찰공고 발생 시 브라우저 푸시 알림 수신
+- 알림 수신을 위해 HTTPS 환경 필요
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 알림 수신 이력 조회
+- 수신한 푸시 알림 내역 목록 조회
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 시스템 구성
 
-### `npm run eject`
+```
+[pps-noti-collect-server]          [pps-fcm-server]         [pps-fcm-client]
+ 조달청 Open API 호출  ──DB 저장──▶  키워드 매칭 후       ──FCM 푸시──▶  브라우저 알림
+ 5분마다 입찰공고 수집               FCM 알림 발송
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 프로젝트 구조
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+src/
+├── components/     # UI 컴포넌트
+├── pages/          # 라우팅 페이지
+└── firebase.ts     # Firebase 초기화 및 FCM 설정
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 실행 방법
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm install
+npm start
+```
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
